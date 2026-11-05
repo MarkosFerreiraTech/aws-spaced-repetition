@@ -30,7 +30,11 @@ public final class Question {
         if (this.options.size() < 2) {
             throw new IllegalArgumentException("a question needs at least 2 options");
         }
-        if (correctOptionIds().isEmpty()) {
+        // Conta direto nas alternativas: um rascunho vindo do importador ainda
+        // nao tem ids (a questao so e persistida depois), e validar por
+        // correctOptionIds() amarraria o dominio a identidade de persistencia.
+        long correctCount = this.options.stream().filter(AnswerOption::correct).count();
+        if (correctCount == 0) {
             throw new IllegalArgumentException("a question needs at least 1 correct option");
         }
     }
@@ -44,6 +48,7 @@ public final class Question {
         return options.stream()
                 .filter(AnswerOption::correct)
                 .map(AnswerOption::id)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
