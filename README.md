@@ -9,7 +9,7 @@ Projeto de MVP da formação full stack — desenvolvimento assistido por IA, co
 engenharia de software: aquitetura em camadas, SOLID, testes automatizados, portões de
 qualidade, DevSecOps e análise de desempenho.
 
-**Status:** Dia 1 concluído (núcleo do backend) — ver [relatório](docs/day-1-report.md).
+**Status:** Dia 2 concluído (backend completo: estudo + importador + JWT) — ver [Dia 1](docs/day-1-report.md) e [Dia 2](docs/day-2-report.md).
 
 ---
 
@@ -147,11 +147,16 @@ curl -X POST http://localhost:8080/api/reviews/1/answer \
 
 Base `/api` · erros no padrão **RFC 9457** (`application/problem+json`)
 
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | `/api/reviews/due?limit=20` | fila do dia (1..100) |
-| POST | `/api/reviews/{cardId}/answer` | responder e reagendar |
-| GET | `/actuator/health` | health check |
+Todas as rotas exigem `Authorization: Bearer <jwt>`, exceto login e health.
+
+| Método | Rota | Auth | Descrição |
+|---|---|---|---|
+| POST | `/api/auth/login` | pública | e-mail + senha → JWT (8h) |
+| POST | `/api/imports/parse` | JWT | texto bruto → rascunhos (**não grava**) |
+| POST | `/api/imports/confirm` | JWT | rascunhos revisados → banco |
+| GET | `/api/reviews/due?limit=20` | JWT | fila do dia (1..100) |
+| POST | `/api/reviews/{cardId}/answer` | JWT | responder e reagendar |
+| GET | `/actuator/health` | pública | health check |
 
 **Contrato de segurança:** a fila do dia **não** expõe quais alternativas estão corretas —
 o cliente só descobre ao responder. Há teste de integração garantindo isso.
@@ -167,11 +172,11 @@ o cliente só descobre ao responder. Há teste de integração garantindo isso.
 
 ## Qualidade
 
-| Métrica | Valor (Dia 1) | Gate |
+| Métrica | Valor (Dia 2) | Gate |
 |---|---|---|
-| Testes unitários | 36 | — |
-| Testes de integração | 5 (Postgres real) | — |
-| Cobertura de linhas | **91,3%** | ≥ 70% |
+| Testes unitários | 63 | — |
+| Testes de integração | 10 (Postgres real + Gemini falso) | — |
+| Cobertura de linhas | **90,4%** | ≥ 70% |
 | Cobertura `domain.scheduler` | 100% | ≥ 85% |
 | Regras arquiteturais | 4 | 100% verdes |
 
@@ -215,8 +220,9 @@ Todas em [docs/adr/](docs/adr/). As que mais importam:
 
 | M0 — 3 dias (atual) | M1 | M2 |
 |---|---|---|
-| ✅ SM-2 + testes | Importador Gemini + tela de revisão | Authelia + reverse proxy |
-| ✅ fila do dia + resposta | JWT + Spring Security | FSRS no lugar de SM-2 |
+| ✅ SM-2 + testes | Deploy staging + DAST (ZAP) | Authelia + reverse proxy |
+| ✅ fila do dia + resposta | k6 + análise de carga | FSRS no lugar de SM-2 |
+| ✅ importador Gemini + JWT | Edição de questões pós-import | BFF (token fora do browser) |
 | Frontend Angular + Clarity | Deploy staging + DAST (ZAP) | Multi-usuário aberto |
 | Quality gate no CI | k6 + análise de carga | BFF (token fora do browser) |
 
