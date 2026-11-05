@@ -34,6 +34,13 @@ public class AnswerOptionEntity {
     protected AnswerOptionEntity() {
     }
 
+    public AnswerOptionEntity(QuestionEntity question, short position, String text, boolean correct) {
+        this.question = question;
+        this.position = position;
+        this.text = text;
+        this.correct = correct;
+    }
+
     public Long getId() {
         return id;
     }

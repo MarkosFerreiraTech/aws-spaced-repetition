@@ -44,6 +44,21 @@ public class QuestionEntity {
     protected QuestionEntity() {
     }
 
+    public QuestionEntity(long examSourceId, String topic, String stem,
+                          String explanation, boolean multiSelect) {
+        this.examSourceId = examSourceId;
+        this.topic = topic;
+        this.stem = stem;
+        this.explanation = explanation;
+        this.multiSelect = multiSelect;
+    }
+
+    /** Mantem os dois lados da relacao consistentes (cascade grava as alternativas). */
+    public void addOption(short position, String text, boolean correct) {
+        AnswerOptionEntity option = new AnswerOptionEntity(this, position, text, correct);
+        this.options.add(option);
+    }
+
     public Long getId() {
         return id;
     }
