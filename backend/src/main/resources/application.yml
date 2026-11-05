@@ -30,6 +30,22 @@ app:
   demo-user-id: ${DEMO_USER_ID:1}
   zone-id: ${APP_ZONE_ID:America/Sao_Paulo}
 
+  jwt:
+    # NUNCA use este valor fora do ambiente local. Em CI/producao: GitHub Secrets.
+    # Minimo de 32 bytes (HS256 exige chave de 256 bits).
+    secret: ${JWT_SECRET:dev-only-secret-change-me-please-32-bytes-min}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:480}
+
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com}
+    model: ${GEMINI_MODEL:gemini-2.0-flash}
+    timeout-seconds: ${GEMINI_TIMEOUT_SECONDS:45}
+
+  import:
+    max-text-length: ${IMPORT_MAX_TEXT_LENGTH:100000}
+    rate-limit-per-minute: ${IMPORT_RATE_LIMIT_PER_MINUTE:5}
+
 management:
   endpoints:
     web:

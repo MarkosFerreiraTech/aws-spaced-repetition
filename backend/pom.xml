@@ -59,10 +59,15 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Seguranca (Dia 2: JWT) -->
+    <!-- Seguranca -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <!-- Traz o Nimbus JOSE JWT: JWT assinado com HS256, sem reinventar criptografia -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
     </dependency>
 
     <!-- Observabilidade -->
@@ -95,6 +100,17 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents.client5</groupId>
+      <artifactId>httpclient5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock-standalone</artifactId>
+      <version>3.9.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
