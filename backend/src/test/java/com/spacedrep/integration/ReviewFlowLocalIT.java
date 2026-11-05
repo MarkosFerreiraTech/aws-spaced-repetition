@@ -26,5 +26,7 @@ class ReviewFlowLocalIT extends ReviewFlowContract {
         registry.add("spring.datasource.url", () -> System.getenv("TEST_DB_URL"));
         registry.add("spring.datasource.username", () -> System.getenv("TEST_DB_USER"));
         registry.add("spring.datasource.password", () -> System.getenv("TEST_DB_PASSWORD"));
+        registry.add("app.gemini.base-url",
+                () -> "http://localhost:" + ReviewFlowContract.GEMINI.port());
     }
 }

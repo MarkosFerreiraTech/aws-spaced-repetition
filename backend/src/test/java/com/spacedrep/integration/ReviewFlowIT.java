@@ -24,5 +24,7 @@ class ReviewFlowIT extends ReviewFlowContract {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
+        registry.add("app.gemini.base-url",
+                () -> "http://localhost:" + ReviewFlowContract.GEMINI.port());
     }
 }
