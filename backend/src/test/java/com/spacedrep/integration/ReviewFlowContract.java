@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +33,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <p>Aqui ficam verificados de fato: migrations Flyway, mapeamento JPA com
  * {@code ddl-auto=validate}, serializacao do contrato HTTP e efeito no banco.</p>
  */
+@TestPropertySource(properties = "app.zone-id=UTC")
 abstract class ReviewFlowContract {
+
+    /**
+     * O app resolve "hoje" no fuso de {@code app.zone-id} (padrao America/Sao_Paulo).
+     * O teste fixa o fuso em UTC para nao depender do fuso do runner: sem isso, um
+     * build rodando as 01:14 UTC comparava com o dia seguinte em Sao Paulo e falhava.
+     * Bug encontrado no CI, nao no ambiente local.
+     */
+    private static final java.time.ZoneId TEST_ZONE = ZoneOffset.UTC;
 
     @Autowired
     protected TestRestTemplate rest;
@@ -92,7 +103,7 @@ abstract class ReviewFlowContract {
         assertThat(response.getBody()).containsEntry("correct", true);
         assertThat(response.getBody()).containsKey("explanation");
         assertThat(response.getBody().get("nextDueDate"))
-                .isEqualTo(LocalDate.now().plusDays(1).toString());
+                .isEqualTo(LocalDate.now(TEST_ZONE).plusDays(1).toString());
 
         Integer attempts = jdbc.queryForObject(
                 "select count(*) from review_attempt where card_id = ?", Integer.class, cardId);
@@ -123,7 +134,7 @@ abstract class ReviewFlowContract {
         assertThat(response.getBody()).containsEntry("correct", false);
         assertThat(response.getBody()).containsEntry("intervalDays", 1);
         assertThat(response.getBody().get("nextDueDate"))
-                .isEqualTo(LocalDate.now().plusDays(1).toString());
+                .isEqualTo(LocalDate.now(TEST_ZONE).plusDays(1).toString());
     }
 
     @Test
