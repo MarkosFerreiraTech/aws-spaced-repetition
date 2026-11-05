@@ -81,7 +81,7 @@ jobs:
 
       - name: Publicar relatorio de cobertura
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-report
           path: backend/target/site/jacoco/
@@ -89,7 +89,7 @@ jobs:
 
       - name: Publicar relatorios de teste
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports
           path: |
